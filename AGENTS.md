@@ -1,13 +1,25 @@
-# AGENTS.md — ghidra-mcp Project
+# AGENTS.md — Mamba MCP Project
 
-You are a coding agent working on **ghidra-mcp**, a Model Context Protocol server that bridges Ghidra's reverse engineering capabilities with AI tools.
+You are a coding agent working on **Mamba**, a Model Context Protocol server that bridges Ghidra's reverse engineering capabilities with AI tools.
 
 ## Project Context
 
-- **Repo**: https://github.com/bethington/ghidra-mcp
-- **Version**: 5.6.0
+- **Repo**: https://github.com/keethesh/mamba-mcp
+- **Forked from**: https://github.com/bethington/ghidra-mcp
+- **Version**: 1.0.0
 - **Language**: Java (Ghidra extension) + Python (MCP bridge)
-- **Key feature**: 225 MCP tools for binary analysis, knowledge database, BSim integration, headless server support, AI documentation workflows
+- **Key feature**: ~111 default MCP tools (lazy-loaded), circuit breaker stability, single build system (Maven only), `pip install` support
+
+## What Makes Mamba Different
+
+Mamba is a clean fork of ghidra-mcp that prioritizes **stability and simplicity over feature count**:
+
+- **~111 tools by default** instead of 225 — only essential tools load on connect
+- **Circuit breaker** — fast-fails instead of hammering a broken Ghidra instance
+- **Background health polling** — auto-detects disconnects before tool calls fail
+- **Lazy loading** — load debugger, emulation, and niche tools on-demand
+- **Maven only** — no Gradle confusion, no dual build systems
+- **`pip install mamba-mcp`** — proper Python packaging, not just `requirements.txt`
 
 ## Directory Structure
 
@@ -15,14 +27,16 @@ You are a coding agent working on **ghidra-mcp**, a Model Context Protocol serve
 - `bridge_mcp_ghidra.py` — Python MCP bridge (main entry point)
 - `docs/` — Documentation and workflow prompts
 - `tests/` — Python unit tests and endpoint catalog
+- `tools/setup/` — Build and deployment CLI
+- `pyproject.toml` — Python package definition
 - `CHANGELOG.md` — Version history
 
 ## Current Priorities
 
-1. Maintain headless server parity with GUI plugin endpoints
+1. Maintain lazy-loading behavior and tool group organization
 2. Keep `tests/endpoints.json` in sync with Java endpoint registrations
-3. Maintain CI/CD pipeline health
-4. Community PR reviews
+3. Ensure CI passes: `pytest tests/unit/ -v --no-cov`
+4. Build: `mvn clean package assembly:single -DskipTests`
 
 ## Guidelines
 

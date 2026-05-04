@@ -1,10 +1,10 @@
-# Ghidra MCP - Claude Code Guide
+# Mamba MCP - Claude Code Guide
 
 ## Overview
 
-MCP server bridging Ghidra reverse engineering with AI tools. 225 MCP tools for binary analysis.
+Fast, stable MCP bridge for Ghidra — simplified setup, lazy loading, and sane defaults. ~111 MCP tools by default, circuit breaker resilience, Maven-only build.
 
-- **Package**: `com.xebyte` | **Version**: 5.6.0 | **Java**: 21 LTS | **Ghidra**: 12.0.4
+- **Package**: `com.xebyte` | **Version**: 1.0.0 | **Java**: 21 LTS | **Ghidra**: 12.0.4
 
 ## Boil the ocean
 
