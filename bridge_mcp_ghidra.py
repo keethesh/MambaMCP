@@ -5,7 +5,7 @@
 # ]
 # ///
 """
-GhidraMCP Bridge — thin MCP↔HTTP multiplexer.
+Mamba Bridge — thin MCP↔HTTP multiplexer.
 
 On startup: exposes list_instances + connect_instance.
 On connect_instance: fetches /mcp/schema from the Ghidra server,
@@ -78,7 +78,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Global state
-mcp = FastMCP("ghidra-mcp")
+mcp = FastMCP("mamba")
 
 # Enable tools/list_changed notifications so clients re-fetch tools after dynamic registration
 _orig_init_options = mcp._mcp_server.create_initialization_options
@@ -2033,7 +2033,7 @@ def main():
     global _lazy_mode, _default_groups
 
     parser = argparse.ArgumentParser(
-        description="GhidraMCP Bridge — MCP↔HTTP multiplexer"
+        description="Mamba Bridge — MCP↔HTTP multiplexer"
     )
     parser.add_argument(
         "--mcp-host",
