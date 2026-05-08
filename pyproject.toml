@@ -51,7 +51,7 @@ debugger = [
 ]
 
 [project.scripts]
-mamba = "bridge_mcp_ghidra:main"
+mamba = "mamba_dispatcher:main"
 
 [project.urls]
 Homepage = "https://github.com/keethesh/mamba-mcp"
@@ -59,7 +59,7 @@ Repository = "https://github.com/keethesh/mamba-mcp"
 Issues = "https://github.com/keethesh/mamba-mcp/issues"
 
 [tool.setuptools]
-py-modules = ["bridge_mcp_ghidra"]
+py-modules = ["bridge_mcp_ghidra", "mamba_dispatcher"]
 
 [tool.setuptools.package-data]
 "*" = ["tests/endpoints.json"]

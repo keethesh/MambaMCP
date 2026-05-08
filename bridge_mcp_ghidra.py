@@ -2029,7 +2029,7 @@ def _start_health_poll() -> None:
 # ==========================================================================
 
 
-def main():
+def main(args=None):
     global _lazy_mode, _default_groups
 
     parser = argparse.ArgumentParser(
@@ -2073,7 +2073,7 @@ def main():
         help="Comma-separated list of default tool groups to load on connect "
         "(default: listing,function,program,xref,comment,datatype,symbol)",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     _lazy_mode = args.lazy
     if args.default_groups is not None:
