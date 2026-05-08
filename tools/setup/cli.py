@@ -22,6 +22,7 @@ from .requirements import (
     make_install_plan,
     resolve_requirements_files,
 )
+from .setup_commands import cmd_mcp, cmd_setup, cmd_start
 from .version_bump import apply_version_bump
 from .versioning import infer_ghidra_version_from_path, read_pom_versions
 
@@ -266,6 +267,83 @@ def build_parser() -> argparse.ArgumentParser:
         help="Print matching updates without modifying files.",
     )
     bump_version_parser.set_defaults(func=cmd_bump_version)
+
+    setup_parser = subparsers.add_parser(
+        "setup",
+        help="One-time setup: download Ghidra, install JARs, build headless server",
+    )
+    setup_parser.add_argument(
+        "--ghidra-version",
+        default="12.0.4",
+        help="Ghidra version to download (default: 12.0.4)",
+    )
+    setup_parser.add_argument(
+        "--ghidra-build-date",
+        default="20250303",
+        help="Ghidra build date suffix (default: 20250303)",
+    )
+    setup_parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Redownload and rebuild even if already set up.",
+    )
+    setup_parser.set_defaults(func=cmd_setup)
+
+    start_parser = subparsers.add_parser(
+        "start",
+        help="Start the Mamba headless server",
+    )
+    start_parser.add_argument(
+        "--port",
+        type=int,
+        default=8089,
+        help="Port for the headless server (default: 8089)",
+    )
+    start_parser.add_argument(
+        "--bind",
+        default="127.0.0.1",
+        help="Bind address (default: 127.0.0.1)",
+    )
+    start_parser.add_argument(
+        "--file",
+        type=Path,
+        help="Binary file to load on startup",
+    )
+    start_parser.add_argument(
+        "--project",
+        type=Path,
+        help="Ghidra project to open on startup",
+    )
+    start_parser.add_argument(
+        "--program",
+        help="Program name within the project",
+    )
+    start_parser.set_defaults(func=cmd_start)
+
+    mcp_parser = subparsers.add_parser(
+        "mcp",
+        help="Start the MCP bridge in stdio mode (auto-starts headless server if needed)",
+    )
+    mcp_parser.add_argument(
+        "--port",
+        type=int,
+        default=8089,
+        help="Headless server port (default: 8089)",
+    )
+    mcp_parser.add_argument(
+        "--lazy",
+        dest="lazy",
+        action="store_true",
+        default=True,
+        help="Lazy-load tool groups (default)",
+    )
+    mcp_parser.add_argument(
+        "--no-lazy",
+        dest="lazy",
+        action="store_false",
+        help="Load all tool groups immediately",
+    )
+    mcp_parser.set_defaults(func=cmd_mcp)
 
     return parser
 

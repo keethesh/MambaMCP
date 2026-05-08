@@ -38,23 +38,48 @@ Fast, stable MCP bridge for Ghidra — simplified setup, lazy loading, and sane 
 
 ### Prerequisites
 
-- Java 21 LTS, Apache Maven 3.9+, Ghidra 12.0.4, Python 3.10+
+- Java 21 LTS, Apache Maven 3.9+, Python 3.10+
 
-### Install
+### One-Command Setup (Headless)
 
 ```bash
 pip install mamba-mcp
+mamba setup
 ```
 
-Or build from source:
+`mamba setup` checks Java/Maven, downloads Ghidra 12.0.4, installs JARs, builds the headless server, and writes `~/.mamba/config.json`. One time per machine.
+
+### Run
 
 ```bash
-git clone https://github.com/keethesh/mamba-mcp.git
-cd mamba-mcp
-mvn clean package assembly:single -DskipTests
+# MCP mode — auto-starts headless server, connects bridge
+mamba mcp
+
+# Or start headless server manually (foreground)
+mamba start
+
+# Then in another terminal
+mamba
 ```
 
-### Deploy to Ghidra
+### Configure Your AI Tool
+
+```json
+{
+  "mcpServers": {
+    "mamba": {
+      "command": "mamba",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+`mamba mcp` checks if the headless server is running, starts it in the background if needed, then launches the MCP bridge in stdio mode. Zero manual steps.
+
+### GUI Plugin (Optional)
+
+If you prefer the Ghidra GUI plugin over headless mode:
 
 ```bash
 python -m tools.setup ensure-prereqs --ghidra-path "F:\ghidra_12.0.4_PUBLIC"
@@ -62,31 +87,7 @@ python -m tools.setup build
 python -m tools.setup deploy --ghidra-path "F:\ghidra_12.0.4_PUBLIC"
 ```
 
-### Run
-
-```bash
-# Stdio transport (AI tools)
-python bridge_mcp_ghidra.py
-
-# HTTP transport (web clients)
-python bridge_mcp_ghidra.py --transport streamable-http --mcp-port 8081
-```
-
-### In Ghidra
-
-1. **Tools > Mamba > Start MCP Server** (after enabling in `File > Configure > Configure All Plugins`)
-2. Configure MCP client:
-
-```json
-{
-  "mcpServers": {
-    "mamba": {
-      "command": "python",
-      "args": ["/path/to/bridge_mcp_ghidra.py"]
-    }
-  }
-}
-```
+Then in Ghidra: **Tools > Mamba > Start MCP Server**
 
 ## Tool Groups
 
@@ -174,6 +175,54 @@ mamba-mcp/
 ├── tools/setup/              # Build + deploy CLI
 ├── pyproject.toml            # Python package definition
 └── pom.xml                   # Maven build
+```
+
+## CLI Reference
+
+### `mamba setup`
+
+One-time installation. Downloads Ghidra, builds the headless server, and writes config.
+
+```bash
+mamba setup                          # default: Ghidra 12.0.4
+mamba setup --force                  # redownload + rebuild
+mamba setup --ghidra-version 12.0.4  # specify version
+```
+
+What it does:
+1. Checks Java 21+ and Maven 3.9+
+2. Downloads Ghidra from GitHub releases (~1.2 GB, cached)
+3. Installs Ghidra JARs into local Maven repository
+4. Builds the headless server JAR (`mvn -P headless`)
+5. Writes `~/.mamba/config.json`
+
+### `mamba start`
+
+Start the headless server in the foreground.
+
+```bash
+mamba start                          # default: 127.0.0.1:8089
+mamba start --port 9090              # custom port
+mamba start --bind 0.0.0.0           # LAN-visible (set GHIDRA_MCP_AUTH_TOKEN)
+mamba start --file /path/to/binary   # auto-load binary
+```
+
+### `mamba mcp`
+
+MCP entry point for AI tools. Auto-starts the headless server if needed, then runs the bridge in stdio mode.
+
+```bash
+mamba mcp           # default: lazy loading, port 8089
+mamba mcp --no-lazy # load all tool groups immediately
+```
+
+### `mamba` (no args)
+
+Runs the MCP bridge directly in stdio mode. Use this if the headless server is already running.
+
+```bash
+mamba               # bridge in stdio mode
+mamba --transport streamable-http --mcp-port 8081
 ```
 
 ## Stability Features
